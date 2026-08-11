@@ -2,11 +2,11 @@
 
 이 문서와 아래 GitHub 주소를 함께 전달하면 됩니다.
 
-- 저장소: <https://github.com/jseung89/drop8-aws-test>
-- 공성전 기준 브랜치: `codex/core-siege-mvp`
-- 바로가기: <https://github.com/jseung89/drop8-aws-test/tree/codex/core-siege-mvp>
+- 저장소: <https://github.com/jseung89/drop8-core-siege-public>
+- 공성전 기준 브랜치: `main`
+- 바로가기: <https://github.com/jseung89/drop8-core-siege-public/tree/main>
 
-> `jseung89/DROP8`의 `main`이 아니라 위 저장소와 브랜치를 사용합니다.
+> 친구 작업은 원본 비공개 저장소가 아니라 위 공개 저장소의 `main`에서 시작합니다.
 
 ## 1. 내려받기와 실행
 
@@ -17,9 +17,9 @@
 - pnpm 11.7.0
 
 ```bash
-git clone https://github.com/jseung89/drop8-aws-test.git
-cd drop8-aws-test
-git switch codex/core-siege-mvp
+git clone https://github.com/jseung89/drop8-core-siege-public.git
+cd drop8-core-siege-public
+git switch main
 corepack enable
 pnpm install
 pnpm check
@@ -31,8 +31,8 @@ pnpm dev
 이미 저장소를 받았다면 작업 전에 갱신합니다.
 
 ```bash
-git switch codex/core-siege-mvp
-git pull origin codex/core-siege-mvp
+git switch main
+git pull origin main
 pnpm install
 pnpm check
 ```
@@ -42,8 +42,8 @@ pnpm check
 **캐릭터 1명 = 작업 브랜치 1개 = Pull Request 1개**로 진행합니다.
 
 ```bash
-git switch codex/core-siege-mvp
-git pull origin codex/core-siege-mvp
+git switch main
+git pull origin main
 git switch -c hero/캐릭터-id
 ```
 
@@ -56,7 +56,7 @@ git commit -m "feat: add core siege hero 캐릭터-id"
 git push -u origin hero/캐릭터-id
 ```
 
-그다음 작업 브랜치에서 `codex/core-siege-mvp`로 PR을 만듭니다. 저장소 쓰기 권한이 없으면 Fork 후 PR을 만듭니다.
+그다음 작업 브랜치에서 `main`으로 PR을 만듭니다. 저장소 쓰기 권한이 없으면 Fork 후 PR을 만듭니다.
 
 ## 3. 캐릭터 코드가 있는 곳
 
@@ -162,7 +162,7 @@ pnpm dev
 
 ## 6. 완료 체크리스트
 
-- [ ] 최신 `codex/core-siege-mvp`에서 독립 브랜치를 만들었다.
+- [ ] 최신 `main`에서 독립 브랜치를 만들었다.
 - [ ] 이번 PR에는 캐릭터 한 명만 들어 있다.
 - [ ] 캐릭터 선택 화면에 표시된다.
 - [ ] 체력과 기본 공격이 정상이다.
@@ -183,8 +183,8 @@ pnpm dev
 ```text
 DROP8 코어 공성전 캐릭터 한 명을 기획하고 실제 구동되게 구현해줘.
 
-저장소: https://github.com/jseung89/drop8-aws-test.git
-기준 브랜치: codex/core-siege-mvp
+저장소: https://github.com/jseung89/drop8-core-siege-public.git
+기준 브랜치: main
 작업 브랜치: hero/[character-id]
 
 이번 작업 범위는 캐릭터 한 명뿐이다. 최신 기준 브랜치에서 시작하고 기존 구조를 먼저 분석해라. 불필요한 새 시스템이나 추상화는 만들지 말고 기존 헬퍼를 우선 재사용해라.
@@ -218,7 +218,7 @@ DROP8 코어 공성전 캐릭터 한 명을 기획하고 실제 구동되게 구
 
 ## 8. 담당자가 PR을 합칠 때
 
-1. PR의 대상 브랜치가 `codex/core-siege-mvp`인지 확인
+1. PR의 대상 브랜치가 `main`인지 확인
 2. 캐릭터 한 명 외의 관계없는 변경이 없는지 확인
 3. `pnpm check` 결과 확인
 4. PR 브랜치를 로컬에서 실행해 직접 플레이
