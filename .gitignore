@@ -1,0 +1,27 @@
+node_modules/
+dist/
+build/
+coverage/
+.env
+*.log
+*.pid
+.vite/
+.cache/
+
+# Local patch/backups generated during DROP8 iteration
+patch_backups/
+rollback_safety/
+DROP8_PLAYER_DIAG/
+DROP8_refactor_*
+*.bak
+*.before_*
+*.before_*.bak
+
+# Scratch diagnostics and one-off command artifacts
+ai_*_context*.txt
+spectator_chat_context.txt
+memory.reactionReadyAt
+node
+powershell
+[{]if(event.key
+6)[{]season.disabledForEndgame

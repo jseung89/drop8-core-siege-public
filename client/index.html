@@ -1,0 +1,92 @@
+<!-- DROP8_REFACTOR_025_OPEN_ARENA_KILL_LIMIT_MATCH_CYCLE -->
+<!-- DROP8_REFACTOR_024E_OPEN_ARENA_SCOREBOARD_UX -->
+<!-- DROP8_REFACTOR_024C_OPEN_ARENA_RESPAWN -->
+<!-- DROP8_REFACTOR_024A_OPEN_ARENA_FOUNDATION -->
+<!-- DROP8_REFACTOR_018_WEREWOLF_SEASON -->
+<!-- DROP8_REFACTOR_017_ADHESIVE_STRIP_LOBBY_BAZOOKA_WATER -->
+<!-- DROP8_REFACTOR_014_PLANE_VISIBILITY_BAZOOKA_SLOT_SWAP -->
+<!doctype html><html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover,interactive-widget=resizes-content"><meta name="theme-color" content="#071018"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="DROP 8"><link rel="manifest" href="/app.webmanifest"><link rel="icon" href="/drop8-icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/drop8-icon-192.png"><title>DROP 8</title></head><body>
+<div id="app">
+  <section id="home" class="screen home-shell">
+    <header class="brand"><small>TOP-DOWN COMBAT</small><h1>DROP <b>8</b></h1><p>전투 방식을 고르고 바로 전장으로 들어가세요.</p></header>
+    <main class="home-content">
+      <section id="homeStartPanel" class="home-start-panel">
+        <label class="nickname-field">닉네임<input id="nickname" maxlength="16" placeholder="비우면 자동 생성"></label>
+        <div class="home-primary-actions"><button id="browseModesBtn" class="primary home-play-button" type="button"><b>게임 시작</b><span>게임 모드 선택</span></button><button id="quickStartBtn" class="home-quick-button" type="button"><b>빠른 시작</b><span>추천 전장 즉시 참가</span></button></div>
+        <details class="quick-start-settings"><summary>빠른 시작 설정</summary><div id="quickMapSelector" class="quick-map-selector" role="group" aria-label="빠른 시작 맵"><button type="button" data-quick-map="small" aria-pressed="false">작은 맵</button><button type="button" data-quick-map="large" aria-pressed="true">큰 맵 <em>추천</em></button><button type="button" data-quick-map="dock8" aria-pressed="false">8번 부두</button></div></details>
+        <p id="quickStartStatus" class="quick-start-status">진행 중인 추천 전장을 우선 탐색합니다.</p>
+      </section>
+      <section id="modePicker" class="mode-picker hidden"><div class="home-step-header"><button id="modePickerBackBtn" class="back-button" type="button" aria-label="첫 화면으로 돌아가기">←</button><div><small>게임 시작</small><h2>게임 모드 선택</h2></div></div><div id="gameModeCards" class="game-mode-cards"></div></section>
+      <section id="modeRooms" class="mode-rooms hidden">
+        <div class="home-step-header"><button id="modeRoomsBackBtn" class="back-button" type="button" aria-label="게임 모드 다시 선택">←</button><div><small id="modeRoomsTag">선택한 모드</small><h2 id="modeRoomsTitle">방 목록</h2><p id="modeRoomsSummary"></p></div><button id="refreshRoomsBtn" class="refresh-rooms" type="button" aria-label="방 목록 새로고침" title="새로고침">↻</button></div>
+        <div class="mode-room-layout"><div class="room-browser"><div class="room-filter-row"><label>맵 <select id="roomMapFilter"><option value="all">전체 맵</option><option value="small">작은 맵</option><option value="large">큰 맵</option><option value="dock8">8번 부두</option><option value="coreSiege">코어 전선</option></select></label></div><div id="roomList" class="room-list"><p class="empty-note">참가 가능한 방을 불러오는 중...</p></div></div>
+          <aside class="room-actions"><button id="createBtn" class="primary create-mode-room" type="button">새 방 만들기</button><label>초대 코드<input id="roomCode" maxlength="6" placeholder="예: A7BC9K"></label><label>비밀번호<input id="password" maxlength="32" placeholder="선택"></label><button id="joinBtn" type="button">코드로 참가</button><label class="inline-check"><input id="publicRoom" type="checkbox" checked> 공개 방</label></aside></div>
+      </section>
+    </main>
+    <div class="arena-create-grid hidden" aria-hidden="true"><label>게임 모드<select id="gameMode"><option value="battleRoyale" selected>배틀로얄</option><option value="openArena">상시 전장</option><option value="domination">점령전</option><option value="coreSiege">코어 공성전</option></select></label><label>맵<select id="createMapId"><option value="small" selected>작은 맵</option><option value="large">큰 맵</option><option value="dock8">8번 부두</option><option value="coreSiege">코어 전선</option></select></label><label>입장<select id="arenaParticipation"><option value="play" selected>직접 플레이</option><option value="spectate">AI 전투 관전</option></select></label><label>인간<select id="maxHumans"><option value="4">4명</option><option value="6">6명</option><option value="8" selected>8명</option></select></label><label>AI<select id="arenaAiCount"><option value="0">0명</option><option value="3">3명</option><option value="4">4명</option><option value="5">5명</option><option value="7" selected>7명</option><option value="8">8명</option><option value="10">10명</option><option value="12">12명</option><option value="16">16명</option></select></label><label>킬 제한<select id="arenaKillLimit"><option value="10">10킬</option><option value="20" selected>20킬</option><option value="30">30킬</option><option value="0">무제한</option></select></label><p id="arenaCreateHint"></p></div>
+    <button id="mobileInstallBtn" class="mobile-install-button hidden" type="button">DROP 8 홈 화면에 설치</button><p id="mobileInstallHint" class="mobile-install-hint hidden">공유 메뉴에서 홈 화면에 추가하면 주소창 없이 플레이할 수 있습니다.</p><div id="homeError" class="error"></div>
+    <details class="home-controls"><summary>조작법</summary><p>WASD 이동 · 마우스 조준 · 좌클릭 공격 · E 상호작용 · R 재장전 · 1/2/3 무기 · Q/E/F 공성 스킬 · M 지도 · Enter 채팅</p></details>
+  </section>
+  <section id="lobby" class="screen hidden"><div class="lobby-layout"><div class="card"><div class="title-row"><h2>대기실 <span id="codeText"></span></h2><div class="row compact-row"><button id="copyBtn">초대 링크 복사</button><button id="leaveLobbyBtn" class="danger" type="button">방 나가기</button></div></div><div id="slots" class="slots"></div><div id="hostSettings" class="settings"><label><input id="fillAi" type="checkbox" checked> 빈자리 AI 충원</label><label>AI <select id="difficulty"><option>easy</option><option selected>normal</option><option>hard</option></select></label><label>자기장 <select id="zoneSpeed"><option>slow</option><option selected>normal</option><option>fast</option></select></label><label>맵 <select id="mapSizeMode"><option value="small" selected>작은 맵 · 2~4명 권장</option><option value="large">큰 맵 · 6~8명 권장</option><option value="dock8">8번 부두 · 강/수영 · 6~8명 권장</option><option value="coreSiege">코어 협곡 · 공성전 전용</option></select></label></div><div class="row"><button id="readyBtn" class="primary">준비</button><button id="startBtn">게임 시작</button></div></div>
+    <div class="card chat-card"><h3>로비 채팅</h3><div id="lobbyMessages" class="messages"></div><form id="lobbyChat"><input id="lobbyChatInput" maxlength="80" placeholder="메시지"><button>전송</button></form></div></div></section>
+  <section id="game" class="hidden"><div id="gameCanvas"></div><canvas id="windowVisibilityOverlay" class="window-visibility-overlay hidden" aria-hidden="true"></canvas><canvas id="scopeOverlay" class="scope-overlay hidden" aria-hidden="true"></canvas><div id="werewolfHud" class="werewolf-hud hidden"></div><div id="vehicleHud" class="vehicle-hud hidden"><b id="vehicleSpeed">속도 0</b><span id="vehicleDurability">내구도 180 / 180</span><span id="vehicleWarning"></span></div><button id="leaveGameBtn" class="game-leave danger" type="button">방 나가기</button><button id="fieldRoomBadge" class="field-room-badge" type="button">방 <b id="fieldRoomCodeText">#------</b> · 초대 복사</button><div id="copyToast" class="copy-toast hidden">초대 링크 복사됨</div><div id="arenaRespawnHud" class="arena-respawn-hud hidden"></div><aside id="arenaScoreboardPanel" class="arena-scoreboard hidden"><h3>상시 전장 순위</h3><div id="arenaPopulationText"></div><div id="arenaScoreboardRows"></div></aside><div id="topHud" class="hud top"><span>방 <b id="gameCodeText">------</b></span><span id="modeText">배틀로얄</span><span id="phaseText">PLANE</span><span>맵 <b id="mapModeText">작은 맵</b></span><span>생존 <b id="aliveText">8</b></span><span>킬 <b id="killsText">0</b></span><span id="zoneHudItem">자기장 <b id="zoneText">30</b></span></div><div id="inventoryHud" class="inventory-belt">
+  <div class="status-chip"><span>HP</span><b id="hpText">100</b></div>
+  <div id="mobileAmmoChip" class="status-chip mobile-ammo-chip"><span id="mobileWeaponName">주먹</span><b id="mobileAmmoText">근접</b></div>
+  <div id="mobileHealChip" class="status-chip mobile-heal-chip"><span>회복</span><b id="mobileHealText">붕 0 · 킷 0</b></div>
+  <div id="slotPrimary" class="inventory-slot weapon-slot" draggable="true" data-weapon-slot="1" role="button" tabindex="0"><kbd>1</kbd><span class="slot-icon">▰</span><div><b id="primaryName">비어 있음</b><small id="primaryAmmo">-</small></div></div>
+  <div id="slotSecondary" class="inventory-slot weapon-slot" draggable="true" data-weapon-slot="2" role="button" tabindex="0"><kbd>2</kbd><span class="slot-icon">⌐</span><div><b id="secondaryName">비어 있음</b><small id="secondaryAmmo">-</small></div></div>
+  <div id="slotMelee" class="inventory-slot weapon-select-slot" data-weapon-slot="3" role="button" tabindex="0"><kbd>3</kbd><span class="slot-icon">✊</span><div><b id="meleeName">주먹</b><small>근접</small></div></div>
+  <div id="slotThrowable" class="inventory-slot weapon-select-slot" data-weapon-slot="4" role="button" tabindex="0"><kbd>4</kbd><span class="slot-icon">●</span><div><b>투척물 없음</b><small>파편탄 · 연막탄 · 화염탄</small></div></div>
+  <div id="slotDrone" class="inventory-slot tactical-slot"><kbd>5</kbd><span class="slot-icon">◇</span><div><b>호위 드론</b><small>0/4</small></div></div>
+  <div id="slotAttachment" class="inventory-slot tactical-slot"><kbd>Z</kbd><span class="slot-icon">▱</span><div><b>장착류</b><small>비어 있음</small></div></div>
+  <div id="slotDeployable" class="inventory-slot tactical-slot"><kbd>X</kbd><span class="slot-icon">⌖</span><div><b>설치류</b><small>트랩0 · 마인0</small></div></div>
+  <div id="slotHeal" class="inventory-slot"><kbd>Q</kbd><span class="slot-icon">✚</span><div><b id="healName">회복 없음</b><small id="healCounts">붕대 0 · 키트 0</small></div></div>
+  <div id="slotArmor" class="inventory-slot armor-slot"><span class="slot-icon">⬟</span><div><b>조끼 <span id="armorText">0</span>%</b><span class="armor-track"><i id="armorBar"></i></span></div></div>
+  <div id="healText" class="heal-progress"></div><div id="reloadText" class="reload-progress"></div>
+</div>
+<div id="mobileControls" class="mobile-controls" aria-hidden="true">
+  <div class="mobile-view-controls" aria-label="모바일 시야 배율">
+    <button type="button" data-mobile-action="zoomOut" aria-label="시야 넓히기" title="시야 넓히기">−</button>
+    <span id="mobileViewValue">80%</span>
+    <button type="button" data-mobile-action="zoomIn" aria-label="시야 확대" title="시야 확대">+</button>
+  </div>
+  <div class="mobile-stick mobile-move-stick" data-mobile-stick="move" aria-label="이동 조이스틱"><span class="mobile-stick-ring"></span><span class="mobile-stick-knob"></span><small>이동</small></div>
+  <div class="mobile-action-cluster">
+    <button class="mobile-action mobile-action-primary" type="button" data-mobile-hold="interact"><span class="mobile-action-label">상호작용</span></button>
+    <button class="mobile-action" type="button" data-mobile-action="reload" aria-label="재장전"><b>R</b><span>재장전</span></button>
+    <button class="mobile-action" type="button" data-mobile-action="heal" aria-label="회복"><b>+</b><span>회복</span><em id="mobileHealCount">0</em></button>
+    <button id="mobileTacticalButton" class="mobile-action mobile-action-tactical" type="button" data-mobile-action="toggleTactical" aria-label="전술 장비"><b>◆</b><span>전술</span><em id="mobileTacticalCount">0</em></button>
+    <button class="mobile-action mobile-action-secondary" type="button" data-mobile-hold="secondary"><b>◎</b><span class="mobile-action-label">보조</span></button>
+  </div>
+  <div id="mobileSiegeSkills" class="mobile-siege-skills" aria-label="공성전 스킬">
+    <button id="mobileSiegeSkill1" type="button" data-mobile-action="siegeAbility1"><i>◇</i><b>Q</b><span>스킬 1</span></button>
+    <button id="mobileSiegeSkill2" type="button" data-mobile-action="siegeAbility2"><i>◇</i><b>E</b><span>스킬 2</span></button>
+    <button id="mobileSiegeSkill3" type="button" data-mobile-action="siegeAbility3"><i>◇</i><b>F</b><span>궁극기</span></button>
+  </div>
+  <div id="mobileRobotParts" class="mobile-robot-parts" aria-label="로봇 파츠 진행도">
+    <div><b>강철</b><i id="mobileAssaultHead">머</i><i id="mobileAssaultCore">몸</i><i id="mobileAssaultLimbs">팔</i><span id="mobileAssaultPartsText">0/3</span></div>
+    <div><b>EMP</b><i id="mobileEmpHead">머</i><i id="mobileEmpCore">몸</i><i id="mobileEmpLimbs">팔</i><span id="mobileEmpPartsText">0/3</span></div>
+    <small id="mobileFusionPartsText">합체 0/6</small>
+  </div>
+  <div id="mobileTacticalMenu" class="mobile-tactical-menu" aria-label="전술 장비 선택">
+    <button id="mobileDroneAction" type="button" data-mobile-action="launchDrones"><b>◇</b><span>드론</span><em id="mobileDroneCount">0/4</em></button>
+    <button id="mobileMineAction" type="button" data-mobile-action="placeSpiderMine"><b>✦</b><span>마인</span><em id="mobileMineCount">0</em></button>
+    <button id="mobileTrapAction" type="button" data-mobile-action="placeStripTrap"><b>▱</b><span>트랩</span><em id="mobileTrapCount">0</em></button>
+    <button id="mobileAssaultRobotAction" type="button" data-mobile-action="robotAssault"><b>R</b><span>강철</span><em>3파츠</em></button>
+    <button id="mobileEmpRobotAction" type="button" data-mobile-action="robotEmp"><b>B</b><span>EMP</span><em>3파츠</em></button>
+    <button id="mobileFusionRobotAction" type="button" data-mobile-action="robotFusion"><b>V</b><span>합체</span><em>6파츠</em></button>
+  </div>
+  <div class="mobile-combat-dock" aria-label="모바일 전투 조작">
+    <div class="mobile-weapon-switches" aria-label="무기 전환">
+      <button class="mobile-weapon-button" type="button" data-mobile-action="weapon1" aria-label="1번 주무기"><b>1</b><span class="mobile-weapon-icon">▰</span></button>
+      <button class="mobile-weapon-button" type="button" data-mobile-action="weapon2" aria-label="2번 보조무기"><b>2</b><span class="mobile-weapon-icon">⌐</span></button>
+      <button class="mobile-weapon-button" type="button" data-mobile-action="weapon3" aria-label="3번 근접무기"><b>3</b><span class="mobile-weapon-icon">✊</span></button>
+    </div>
+    <div class="mobile-stick mobile-aim-stick" data-mobile-stick="aim" role="button" aria-label="조준 및 발사 조이스틱"><span class="mobile-stick-ring mobile-aim-stick-ring"></span><span class="mobile-stick-knob mobile-aim-stick-knob"></span><small id="mobileAimHint">드래그 연사</small></div>
+  </div>
+</div>
+<div id="mobilePortraitGuard" class="mobile-portrait-guard" aria-hidden="true"><b>가로로 돌려주세요</b><span>DROP8 전투는 가로 화면에 맞춰져 있습니다.</span></div>
+<div id="mobileFullscreenPrompt" class="mobile-fullscreen-prompt" aria-hidden="true"><div><b>넓은 화면으로 전투</b><span>브라우저 메뉴를 숨기고 가로 화면으로 플레이합니다.</span><button id="mobileFullscreenStart" class="primary" type="button">전체화면으로 시작</button><button id="mobileFullscreenSkip" type="button">현재 화면으로 계속</button></div></div>
+<button id="mobileFullscreenReenter" class="mobile-fullscreen-reenter" type="button" aria-label="전체화면 전환" title="전체화면">⛶</button>
+<div id="inventoryPanel" class="inventory-panel hidden"><h3>인벤토리 <small>1·2번 드래그 교환 · 우클릭 버리기 · Tab으로 닫기</small></h3><div id="inventoryDetails" class="inventory-details"></div><p>클릭으로 선택 · 1/2번 드래그 교환 · 우클릭 버리기 · 4 투척무기 · 5 호위 드론/스트립 트랩 · 6 스파이더 마인 · Q 자동 회복 · E 제단 의식 · F 변신 · 늑대 우클릭 질주</p></div><div id="killfeed"></div><div id="fieldChatPanel" class="field-chat-panel collapsed"><div class="field-chat-title"><span>필드 채팅 <small>Enter</small></span><button id="toggleFieldChat" type="button" aria-label="채팅 로그 펼치기">▲ <b id="chatUnread" class="hidden">0</b></button></div><div id="gameMessages" class="game-messages"></div></div><form id="gameChat" class="game-chat hidden"><input id="gameChatInput" maxlength="80" placeholder="메시지를 입력하고 Enter로 전송 · Esc 취소"><button>전송</button></form><div id="gameNotices" class="game-notices" aria-live="polite" aria-atomic="false"></div><div id="pickupToast" class="pickup-toast hidden"></div><div id="quickChat" class="quick-chat hidden"><button data-msg="무기 없다!">무기 없다!</button><button data-msg="싸우지 말자!">싸우지 말자!</button><button data-msg="여기 누구 있다!">여기 누구 있다!</button><button data-msg="도망가자!">도망가자!</button><button data-msg="나와라!">나와라!</button><button data-msg="ㅋㅋㅋㅋ">ㅋㅋㅋㅋ</button></div><div id="arenaRoundResult" class="result arena-round-result hidden"><h2 id="arenaRoundTitle"></h2><div id="arenaRoundRows"></div><p id="arenaRoundCountdown"></p></div><div id="result" class="result hidden"><h2 id="resultTitle"></h2><p id="resultStats"></p><button id="rematchBtn" class="primary">로비로 돌아가기</button></div></section>
+<details id="audioSettingsPanel" class="audio-settings"><summary>🔊 소리 설정</summary><label>전체 음량<input id="audioMaster" type="range" min="0" max="100" step="1"></label><label>효과음<input id="audioEffects" type="range" min="0" max="100" step="1"></label><label>환경음<input id="audioEnvironment" type="range" min="0" max="100" step="1"></label><label>음악<input id="audioMusic" type="range" min="0" max="100" step="1"></label><label class="audio-mute"><input id="audioMute" type="checkbox"> 음소거</label></details><div id="audioUnlockHint" class="audio-unlock-hint">🔊 소리를 사용하려면 화면을 클릭하세요</div></div><script type="module" src="/src/main.ts"></script></body></html>

@@ -1,0 +1,126 @@
+name: Deploy AWS Test Server
+
+on:
+  push:
+    branches:
+      - aws-test
+  workflow_dispatch:
+
+concurrency:
+  group: drop8-aws-test
+  cancel-in-progress: true
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Run focused server tests
+        run: >-
+          pnpm --filter @drop8/server exec vitest run
+          tests/refactor017-adhesive-strip-trap.test.ts
+          tests/refactor029-tank-cannon.test.ts
+          tests/refactor037-emp-exo.test.ts
+          tests/refactor039-emp-tank-balance.test.ts
+          tests/refactor040-fusion-robot.test.ts
+          tests/refactor041-open-arena-fusion-counter.test.ts
+          tests/refactor042-stun-vehicle-eject.test.ts
+          tests/refactor043-ai-tactical-parity.test.ts
+          tests/refactor044-ai-spectator-arena.test.ts
+          tests/refactor045-ai-executive-brain.test.ts
+          tests/refactor046-sticky-spectator.test.ts
+          tests/refactor047-ai-vehicle-brain.test.ts
+          tests/refactor048-ai-combat-brain.test.ts
+          tests/refactor049-ai-tactical-brain.test.ts
+          tests/refactor050-ai-resource-brain.test.ts
+          tests/refactor051-ai-experience-brain.test.ts
+          tests/refactor052-ai-role-brain.test.ts
+          tests/refactor053-ai-arena-director.test.ts
+          tests/refactor054-room-creation-mode-map.test.ts
+          tests/refactor055-ai-locomotion-brain.test.ts
+          tests/refactor057-mobile-action-pwa.test.ts
+          tests/refactor058-quick-start.test.ts
+          tests/refactor059-mobile-minimap.test.ts
+          tests/refactor060-railgun.test.ts
+          tests/refactor061-charge-laser-cannon.test.ts
+          tests/refactor064-core-siege.test.ts
+          --pool=threads --maxWorkers=1 --no-file-parallelism
+          --testTimeout=30000 --hookTimeout=30000
+
+  deploy:
+    runs-on: [self-hosted, linux, x64, drop8-aws-test]
+    needs: build-test
+    environment: aws-test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      - name: Sync source to app directory
+        env:
+          APP_DIR: ${{ secrets.APP_DIR }}
+        run: |
+          DEPLOY_DIR="${APP_DIR:-/opt/drop8-test}"
+          sudo mkdir -p "$DEPLOY_DIR"
+          sudo chown -R "$USER:$USER" "$DEPLOY_DIR"
+          rsync -az --delete \
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude 'node_modules' \
+            --exclude 'client/dist' \
+            --exclude 'server/build' \
+            --exclude 'shared/dist' \
+            --exclude '*.log' \
+            ./ "$DEPLOY_DIR/"
+
+      - name: Build and restart app
+        env:
+          APP_DIR: ${{ secrets.APP_DIR }}
+          PORT: ${{ secrets.PORT }}
+        run: |
+          DEPLOY_DIR="${APP_DIR:-/opt/drop8-test}"
+          APP_PORT="${PORT:-2567}"
+          cd "$DEPLOY_DIR"
+          pnpm install --frozen-lockfile
+          pnpm build
+          PORT="$APP_PORT" NODE_ENV=production DROP8_TEST_CHEATS=1 \
+            pm2 startOrReload ecosystem.config.cjs --env production --update-env
+          pm2 save
+
+      - name: Health check
+        env:
+          PORT: ${{ secrets.PORT }}
+        run: |
+          APP_PORT="${PORT:-2567}"
+          for attempt in {1..12}; do
+            if curl --fail --silent --show-error \
+              "http://127.0.0.1:$APP_PORT/api/health"; then
+              exit 0
+            fi
+            echo "Waiting for DROP 8 server ($attempt/12)..."
+            sleep 5
+          done
+          exit 1
