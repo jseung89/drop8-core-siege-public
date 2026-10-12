@@ -100,8 +100,9 @@ describe('core siege rules',()=>{
   });
 
   it('uses mode-local basic attacks, infinite reserves, and scaling respawns',()=>{
-    expect(CORE_SIEGE_HERO_IDS).toHaveLength(20);
-    expect(Object.keys(CORE_SIEGE_BASIC_ATTACKS)).toEqual(expect.arrayContaining(CORE_SIEGE_HERO_IDS));
+    expect(CORE_SIEGE_HERO_IDS).toHaveLength(27);
+    expect(new Set(CORE_SIEGE_HERO_IDS).size).toBe(CORE_SIEGE_HERO_IDS.length);
+    expect(Object.keys(CORE_SIEGE_BASIC_ATTACKS).sort()).toEqual([...CORE_SIEGE_HERO_IDS].sort());
     expect(CORE_SIEGE_BASIC_ATTACKS.vanguard).toMatchObject({weaponId:'rifle',damage:16,magazine:28});
     expect(CORE_SIEGE_BASIC_ATTACKS.earthHammer).toMatchObject({weaponId:'fists',displayName:'대지 망치'});
     expect(CORE_SIEGE_BASIC_ATTACKS.chainExecutioner).toMatchObject({weaponId:'fists',displayName:'사슬낫'});

@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { CORE_SIEGE_BASIC_ATTACKS, CORE_SIEGE_CONFIG, CORE_SIEGE_HERO_IDS, MAP_CONFIGS, WEAPONS, normalizeOpenArenaConfig } from '@drop8/shared';
 import { publicRoomInfoFromListing } from '../src/roomRegistry.js';
 import { Drop8Room } from '../src/rooms/Drop8Room.js';
-import { PlayerState } from '../src/rooms/schema.js';
+import { CoreSiegeMinionState, PlayerState } from '../src/rooms/schema.js';
 
 function activeRoom(){
   const clock={value:100};
@@ -27,6 +27,29 @@ function combatant(id:string,team:'blue'|'red',x:number,y:number){
 }
 
 describe('Refactor 064 core siege MVP',()=>{
+  it('keeps hero-only abilities off minions while allowing dash fallback targets',()=>{
+    const {room}=activeRoom();
+    const attacker=combatant('caster','blue',1000,900);
+    const ally=combatant('ally','blue',1040,900);
+    const enemy=combatant('enemy','red',1100,900);
+    const minion=new CoreSiegeMinionState();
+    minion.id='enemy-minion';minion.team='red';minion.x=1050;minion.y=900;
+    room.state.players.set(attacker.id,attacker);
+    room.state.players.set(ally.id,ally);
+    room.state.coreSiege.minions.set(minion.id,minion);
+    const point={x:1050,y:900};
+    expect(room.nearestCoreSiegeEnemy(attacker,point,180)).toBeUndefined();
+    expect(room.nearestCoreSiegeEnemy(attacker,point,180,false)).toBeUndefined();
+    expect(room.nearestCoreSiegeEnemy(attacker,point,180,true)).toBe(minion);
+    room.state.players.set(enemy.id,enemy);
+    expect(room.nearestCoreSiegeEnemy(attacker,point,180)).toBe(enemy);
+    expect(room.nearestCoreSiegeEnemy(attacker,point,180,true)).toBe(enemy);
+    enemy.alive=false;
+    expect(room.nearestCoreSiegeEnemy(attacker,point,180)).toBeUndefined();
+    expect(room.nearestCoreSiegeEnemy(attacker,point,180,true)).toBe(minion);
+    expect(room.nearestCoreSiegeEnemy(attacker,{x:2000,y:900},180,true)).toBeUndefined();
+  });
+
   it('keeps active core siege rooms joinable in the public room registry',()=>{
     const room=publicRoomInfoFromListing({roomId:'SIEGE1',clients:2,maxClients:4,metadata:{roomCode:'SIEGE1',hostName:'host',players:4,humans:2,phase:'ACTIVE',fillAi:true,publicRoom:true,mapSizeMode:'small',mapDisplayName:'작은 맵',createdAt:1,updatedAt:2,gameMode:'coreSiege',matchFormat:'teams',maxHumans:4,configuredAiCount:2,spectatorOnly:false,joinInProgress:true,lifecycle:'active',killLimit:0,roundState:'active'}} as any);
     expect(room).toMatchObject({gameMode:'coreSiege',joinInProgress:true,lifecycle:'active',maxHumans:4});
@@ -496,14 +519,14 @@ describe('Refactor 064 core siege MVP',()=>{
   });
 
   it('defines every planned hero for the AI roster',()=>{
-    expect(CORE_SIEGE_HERO_IDS).toHaveLength(20);
+    expect(CORE_SIEGE_HERO_IDS).toHaveLength(27);
     const {room}=activeRoom();
     const assigned=CORE_SIEGE_HERO_IDS.map((heroId,index)=>{
       const ai=combatant(`hero-${index}`,index%2?'red':'blue',900+index*230,900);ai.ai=true;room.state.players.set(ai.id,ai);
       room.coreSiegePlayer(ai.id).heroId=heroId;
       return room.coreSiegePlayer(ai.id).heroId;
     });
-    expect(new Set(assigned).size).toBe(20);
+    expect(new Set(assigned).size).toBe(CORE_SIEGE_HERO_IDS.length);
   });
 
   it('keeps the skill inspection lab host-only and uses real siege actions',()=>{

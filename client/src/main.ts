@@ -23,6 +23,7 @@ import { normalizeQuickStartMap, normalizeQuickStartPreset, quickStartRoomOption
 import { GAME_MODE_CHOICES, gameModeChoice, roomsForGameMode } from './gameModeBrowser';
 import { mobileControls } from './mobileControls';
 import './style.css';
+import './deployment-room.css';
 // DROP8_REFACTOR_013_INTERIOR_RIVER_DOCK8
 
 const $=<T extends HTMLElement>(id:string)=>document.getElementById(id) as T;
@@ -93,7 +94,7 @@ const gameEl=$('game');
 const heroIds=Object.keys(CORE_SIEGE_HEROES) as CoreSiegeHeroId[];
 let selectedPracticeHero=(localStorage.getItem('drop8-practice-hero') as CoreSiegeHeroId)||'vanguard';
 if(!CORE_SIEGE_HEROES[selectedPracticeHero])selectedPracticeHero='vanguard';
-const heroLabButton=document.createElement('button');heroLabButton.id='heroLabBtn';heroLabButton.className='home-hero-lab-button';heroLabButton.type='button';heroLabButton.innerHTML='<b>영웅 연구소</b><span>20명 기술 보기 · 즉시 연습</span>';document.querySelector('.home-primary-actions')?.append(heroLabButton);
+const heroLabButton=document.createElement('button');heroLabButton.id='heroLabBtn';heroLabButton.className='home-hero-lab-button';heroLabButton.type='button';heroLabButton.innerHTML=`<b>영웅 연구소</b><span>${heroIds.length}명 기술 보기 · 즉시 연습</span>`;document.querySelector('.home-primary-actions')?.append(heroLabButton);
 const heroLabScreen=document.createElement('section');heroLabScreen.id='heroLabScreen';heroLabScreen.className='hero-lab-screen hidden';heroLabScreen.innerHTML=`<header><button id="heroLabBack" type="button" aria-label="돌아가기">←</button><div><small>공성전 훈련</small><h2>영웅 연구소</h2><p>영웅을 고르고 실제 판정으로 기술을 시험합니다.</p></div><button id="heroLabStart" class="primary" type="button">연습 시작</button></header><div class="hero-lab-layout"><nav id="heroLabRoster" aria-label="영웅 목록"></nav><article class="hero-lab-detail"><div id="heroLabPortrait" class="hero-lab-portrait" aria-hidden="true"></div><div class="hero-lab-summary"><small id="heroLabRole"></small><h3 id="heroLabName"></h3><p id="heroLabBasic"></p></div><div id="heroLabAbilities" class="hero-lab-abilities"></div></article></div>`;document.querySelector('.home-content')?.append(heroLabScreen);
 const homeStartPanel=$('homeStartPanel');
 function renderHeroLab(heroId=selectedPracticeHero){
@@ -112,6 +113,7 @@ renderHeroLab();
 const dominationHud=document.createElement('aside');dominationHud.id='dominationHud';dominationHud.className='domination-hud hidden';dominationHud.innerHTML='<b id="dominationMatchup">점령전 · 파랑팀 : 빨강팀</b><div><span id="dominationHumanScore">파랑 0</span><i id="dominationTargetScore">/ 240</i><span id="dominationAiScore">빨강 0</span></div><p id="dominationSitesText">A 중립 · B 중립</p>';gameEl.append(dominationHud);
 const coreSiegeHud=document.createElement('aside');coreSiegeHud.id='coreSiegeHud';coreSiegeHud.className='core-siege-hud hidden';coreSiegeHud.innerHTML=`
   <div class="core-siege-score"><span id="blueCoreText">블루 코어 1500</span><b id="coreSiegeTimer">15:00</b><span id="redCoreText">레드 코어 1500</span></div>
+  <p id="siegeObjective" class="siege-objective">미니언과 함께 타워를 공략하세요.</p>
   <div class="core-siege-level">
     <b id="coreSiegeHeroText">강습병</b><span id="coreSiegeLevelText">Lv.3</span>
     <div class="core-siege-xp"><i id="coreSiegeXpFill"></i></div><em id="coreSiegeXpText">0 / 100 XP</em>
@@ -355,7 +357,7 @@ function selectHomeGameMode(value:unknown){
   updateCreateModeUi();renderRoomList(cachedRooms);showHomeStep('rooms');audio.playUi('ui_confirm');
 }
 const gameModeCards=$('gameModeCards');
-for(const mode of GAME_MODE_CHOICES){const button=document.createElement('button');button.type='button';button.className=`game-mode-card mode-${mode.id}`;button.dataset.gameMode=mode.id;button.innerHTML=`<span>${mode.tag}</span><b>${mode.name}</b><small>${mode.summary}</small><i aria-hidden="true">→</i>`;button.onclick=()=>selectHomeGameMode(mode.id);gameModeCards.append(button);}
+for(const mode of GAME_MODE_CHOICES){const button=document.createElement('button');button.type='button';button.className=`game-mode-card mode-${mode.id}`;button.dataset.gameMode=mode.id;button.innerHTML=`<img class="mode-preview" src="${import.meta.env.BASE_URL}previews/drop8-${mode.preview}.png" alt="" loading="lazy"/><span>${mode.tag}</span><b>${mode.name}</b><small>${mode.summary}</small><strong class="mode-objective">${mode.objective}</strong><i aria-hidden="true">→</i>`;button.onclick=()=>selectHomeGameMode(mode.id);gameModeCards.append(button);}
 $('browseModesBtn').onclick=()=>{showHomeStep('modes');audio.playUi('ui_click');};
 $('modePickerBackBtn').onclick=()=>showHomeStep('start');
 $('modeRoomsBackBtn').onclick=()=>showHomeStep('modes');
@@ -816,6 +818,10 @@ function renderCoreSiegeHud(s:any){
   const heroAccents:Record<CoreSiegeHeroId,string>={vanguard:'#ffb65c',technician:'#64dcff',trapper:'#8de47a',trickster:'#ffe16a',medigel:'#69efa0',fireEngineer:'#ff7048',orbitalSniper:'#a4d8ff',wolfWarrior:'#d88cff',shieldCaptain:'#74b6ff',demolitionist:'#ff9a57',steelPilot:'#ff6258',empPilot:'#54d8ff',ironCyclone:'#e7b85d',scrapSummoner:'#b6e36a',gravityWarden:'#9b8cff',smokeTracker:'#8ac7b4',sonicCommander:'#ff8fc8',earthHammer:'#d6a85b',chainExecutioner:'#d65c6a',twinBlade:'#66e0c5',burstTrooper:'#ffd15c',phaseMarksman:'#65e1ff',opticArtillerist:'#f2c6ff',impactDriller:'#e09a55',spotterGunner:'#c5d2df',jetstreamBlade:'#70e8d1',blackoutAssassin:'#7884a8'};
   coreSiegeHud.style.setProperty('--siege-accent',heroAccents[hero.id]);coreSiegeSkills.style.setProperty('--siege-accent',heroAccents[hero.id]);$('mobileSiegeSkills').style.setProperty('--siege-accent',heroAccents[hero.id]);
   const blue=(s.coreSiege.structures??[]).find((structure:any)=>structure.id==='blue-core'),red=(s.coreSiege.structures??[]).find((structure:any)=>structure.id==='red-core');
+  const enemyStructures=(s.coreSiege.structures??[]).filter((structure:any)=>me?.team && structure.team!==me.team && !structure.destroyed && structure.hp>0);
+  const enemyCore=enemyStructures.find((structure:any)=>structure.kind==='core');
+  const nextTower=enemyStructures.find((structure:any)=>structure.kind==='outerTower')??enemyStructures.find((structure:any)=>structure.kind==='innerTower');
+  $('siegeObjective').textContent=!me?'전장을 관전 중입니다.':!me.alive?'부활 대기 · 팀의 전선을 확인하세요.':enemyCore?.vulnerable?'코어 개방 · 적 코어를 파괴하세요!':nextTower?`${nextTower.kind==='outerTower'?'외곽':'내부'} 타워 공략 · 미니언과 함께 전진하세요.`:'전장 목표 확인 중';
   $('blueCoreText').textContent=`블루 코어 ${Math.ceil(Number(blue?.hp??0))}`;$('redCoreText').textContent=`레드 코어 ${Math.ceil(Number(red?.hp??0))}`;
   const left=Math.max(0,Number(s.coreSiege.roundEndsAt??0)-Number(s.serverTime??0)),minutes=Math.floor(left/60),seconds=Math.floor(left%60);$('coreSiegeTimer').textContent=`${minutes}:${String(seconds).padStart(2,'0')}`;
   const level=Math.max(1,Number(me?.level??3)),xp=Math.max(0,Number(me?.xp??240)),skillPoints=Math.max(0,Number(me?.skillPoints??0)),xpWindow=coreSiegeLevelXpWindow(level),xpSpan=Math.max(1,xpWindow.next-xpWindow.current),xpRatio=level>=10?1:Math.max(0,Math.min(1,(xp-xpWindow.current)/xpSpan)),exoRobot=Boolean(me?.exoActive);

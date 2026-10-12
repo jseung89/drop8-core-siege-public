@@ -2556,7 +2556,9 @@ export class Drop8Room extends Room<{ state: Drop8State; metadata: Drop8RoomMeta
     return this.state.players.get(targetId)??this.state.coreSiege.minions.get(targetId);
   }
 
-  private nearestCoreSiegeEnemy(p:PlayerState,point:Point,assistRadius:number,includeMinions=false){
+  private nearestCoreSiegeEnemy(p:PlayerState,point:Point,assistRadius:number,includeMinions?:false):PlayerState|undefined;
+  private nearestCoreSiegeEnemy(p:PlayerState,point:Point,assistRadius:number,includeMinions:boolean):PlayerState|CoreSiegeMinionState|undefined;
+  private nearestCoreSiegeEnemy(p:PlayerState,point:Point,assistRadius:number,includeMinions=false):PlayerState|CoreSiegeMinionState|undefined{
     const players=[...this.state.players.values()].filter((target)=>target.alive&&target.id!==p.id&&!this.sameCombatTeam(p,target)&&distance(target.x,target.y,point.x,point.y)<=assistRadius).sort((a,b)=>distance(a.x,a.y,point.x,point.y)-distance(b.x,b.y,point.x,point.y));
     if(players[0]||!includeMinions)return players[0];
     return [...this.state.coreSiege.minions.values()].filter((target)=>target.team!==p.team&&distance(target.x,target.y,point.x,point.y)<=assistRadius).sort((a,b)=>distance(a.x,a.y,point.x,point.y)-distance(b.x,b.y,point.x,point.y))[0];

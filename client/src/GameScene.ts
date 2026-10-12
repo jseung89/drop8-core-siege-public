@@ -2252,6 +2252,34 @@ export class GameScene extends Phaser.Scene {
         else if(slot===2){for(let spoke=0;spoke<6;spoke++){const a=spoke/6*Math.PI*2,r=35+progress*45;g.lineStyle(5,spoke%2?0xd65c6a:0xabb3b7,.75*life).lineBetween(x+Math.cos(a)*18,y+Math.sin(a)*18,x+Math.cos(a)*r,y+Math.sin(a)*r);}g.fillStyle(0x2b2025,.9*life).fillTriangle(x,y-34,x-13,y+20,x+13,y+20);}
         else{const cage=48+progress*75;for(let link=0;link<12;link++){const a=link/12*Math.PI*2,px=tx+Math.cos(a)*cage,py=ty+Math.sin(a)*cage;g.lineStyle(4,link%2?0xd65c6a:0xd8dee0,.8*life).strokeEllipse(px,py,18,9);g.lineStyle(2,0x8d3946,.55*life).lineBetween(px,py,tx,ty);}g.fillStyle(0xf0c7cb,.86*life).fillCircle(tx,ty,7);}
         break;
+      case 'burstTrooper':
+        if(slot===2)for(const side of [-1,1])line(-40,side*18,travel*progress,side*18,4,0xffda7a);
+        else for(let i=0;i<(slot===3?9:2);i++){const side=slot===3?(i-4)*9:(i-.5)*10;wedge(24+travel*progress,side,30,4,0xffda7a);line(12,side,24+travel*progress,side,2,0xfff4d0,.5);}
+        break;
+      case 'phaseMarksman':
+        if(slot===2)for(let i=0;i<4;i++){const c=pt(travel*progress-i*22);g.lineStyle(3,0x9ae8ff,(.8-i*.15)*life).strokeRect(c.x-12,c.y-18,24,36);}
+        else{line(18,0,travel,0,slot===3?12:3,0x92dfff,.5);line(18,0,travel,0,2,0xffffff);for(let i=1;i<=3;i++)wedge(travel*i/4,0,14,7,0xb9f1ff);}
+        break;
+      case 'opticArtillerist':
+        if(slot===2){targetRing(22+progress*36,0xf5a9ff);g.lineStyle(3,0xffe5ff,life).strokeRect(tx-16,ty-16,32,32);}
+        else{for(const side of [-1,1])line(15,side*20*(1-progress),travel,side*7,3,0xe399ff);line(15,0,travel,0,slot===3?9:4,0xffedff,.75);}
+        break;
+      case 'impactDriller':
+        if(slot===2){for(let i=0;i<3;i++)targetRing(22+i*16+progress*20,0x75dfc4,3);}
+        else{const reach=slot===3?120:travel;for(let i=0;i<4;i++)wedge(20+reach*progress-i*18,0,24,14-i*2, i%2?0xffd489:0x9b8163);line(0,0,reach*progress,0,5,0xffecb5,.5);}
+        break;
+      case 'spotterGunner':
+        if(slot===2){g.lineStyle(4,0xe6c477,life).strokeRect(tx-24,ty-14,48,28);for(let i=-2;i<=2;i++)g.lineBetween(tx+i*9,ty-20,tx+i*9,ty+20);}
+        else{line(15,0,travel,0,2,0xffe3a0);const gap=28-progress*12;g.lineStyle(3,0xffd075,life).lineBetween(tx-gap,ty,tx+gap,ty).lineBetween(tx,ty-gap,tx,ty+gap);if(slot===3)for(let i=0;i<4;i++)dot(-12,i*10-15,3,0xffd075);}
+        break;
+      case 'jetstreamBlade':
+        if(slot===2)for(let i=-1;i<=1;i++)line(-20,i*13,travel*progress,i*13,3,0xb4f7ff,.8);
+        else for(let i=0;i<(slot===3?4:2);i++){const c=pt(slot===3?travel:50+progress*65),r=24+i*12;g.lineStyle(4,i%2?0xffffff:0x80ddeb,.85*life).beginPath().arc(c.x,c.y,r,aim+progress*4+i,aim+progress*4+i+1.8).strokePath();}
+        break;
+      case 'blackoutAssassin':
+        if(slot===3){for(let i=0;i<4;i++){const offset=(i-1.5)*18;g.lineStyle(4,0x9b9cff,life).lineBetween(tx+offset,ty-100*(1-progress),tx,ty);}targetRing(18+progress*48,0x7375cd);}
+        else{for(let i=0;i<6;i++){const a=travel*i/6,b=travel*(i+1)/6;line(a,i%2?12:-12,b,i%2?-12:12,slot===2?4:2,0xa6baff);}dot(travel,0,5,0xe6eeff);}
+        break;
       case 'twinBlade':
         if(slot===1){for(const side of [-1,1]){const end=pt(travel*.72*progress,side*(68-50*progress));g.lineStyle(11,side<0?0x66e0c5:0xd9fff5,.2*life).lineBetween(x,y,end.x,end.y);g.lineStyle(4,side<0?0x66e0c5:0xffffff,.92*life).lineBetween(x-sx*side*18,y-sy*side*18,end.x,end.y);}}
         else if(slot===2){const guard=22+progress*18;g.lineStyle(7,0xe9fffa,.86*life).lineBetween(x-guard,y-guard,x+guard,y+guard).lineBetween(x+guard,y-guard,x-guard,y+guard);g.lineStyle(3,0x66e0c5,.68*life).strokeRect(x-guard-8,y-guard-8,(guard+8)*2,(guard+8)*2);}

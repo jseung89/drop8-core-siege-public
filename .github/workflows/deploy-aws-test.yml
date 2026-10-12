@@ -28,40 +28,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build
-        run: pnpm build
+      - name: Validate types, lint, tests, and production build
+        run: pnpm check
 
-      - name: Run focused server tests
-        run: >-
-          pnpm --filter @drop8/server exec vitest run
-          tests/refactor017-adhesive-strip-trap.test.ts
-          tests/refactor029-tank-cannon.test.ts
-          tests/refactor037-emp-exo.test.ts
-          tests/refactor039-emp-tank-balance.test.ts
-          tests/refactor040-fusion-robot.test.ts
-          tests/refactor041-open-arena-fusion-counter.test.ts
-          tests/refactor042-stun-vehicle-eject.test.ts
-          tests/refactor043-ai-tactical-parity.test.ts
-          tests/refactor044-ai-spectator-arena.test.ts
-          tests/refactor045-ai-executive-brain.test.ts
-          tests/refactor046-sticky-spectator.test.ts
-          tests/refactor047-ai-vehicle-brain.test.ts
-          tests/refactor048-ai-combat-brain.test.ts
-          tests/refactor049-ai-tactical-brain.test.ts
-          tests/refactor050-ai-resource-brain.test.ts
-          tests/refactor051-ai-experience-brain.test.ts
-          tests/refactor052-ai-role-brain.test.ts
-          tests/refactor053-ai-arena-director.test.ts
-          tests/refactor054-room-creation-mode-map.test.ts
-          tests/refactor055-ai-locomotion-brain.test.ts
-          tests/refactor057-mobile-action-pwa.test.ts
-          tests/refactor058-quick-start.test.ts
-          tests/refactor059-mobile-minimap.test.ts
-          tests/refactor060-railgun.test.ts
-          tests/refactor061-charge-laser-cannon.test.ts
-          tests/refactor064-core-siege.test.ts
-          --pool=threads --maxWorkers=1 --no-file-parallelism
-          --testTimeout=30000 --hookTimeout=30000
 
   deploy:
     runs-on: [self-hosted, linux, x64, drop8-aws-test]
